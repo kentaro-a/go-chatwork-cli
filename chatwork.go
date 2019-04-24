@@ -4,15 +4,17 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 const (
@@ -114,7 +116,7 @@ func (api *Api) apiRequestWithFile(req_data RequestData) ([]byte, error) {
 	mw.WriteField("message", req_data.Payload["message"])
 
 	file, _ := os.Open(req_data.Payload["filepath"])
-	fw, _ := mw.CreateFormFile("file", req_data.Payload["filepath"])
+	fw, _ := mw.CreateFormFile("file", filepath.Base(req_data.Payload["filepath"]))
 	io.Copy(fw, file)
 
 	contentType := mw.FormDataContentType()
